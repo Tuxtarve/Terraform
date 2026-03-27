@@ -60,3 +60,40 @@ resource "aws_route_table_association" "public_assoc" {
   subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public_rt.id
 }
+
+# 7. NAT Gateway용 고정 IP (EIP)
+resource "aws_eip" "nat" {
+  domain = "vpc"
+  tags   = { Name = "${var.project_name}-nat-eip" }
+}
+
+# 8. NAT Gateway 생성 (퍼블릭 서브넷 중 하나에 배치)
+resource "aws_internet_gateway" "igw" { # (기존 코드 참고용)
+}
+
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public[0].id # 첫 번째 퍼블릭 서브넷에 위치
+  tags          = { Name = "${var.project_name}-nat" }
+
+  depends_on = [aws_internet_gateway.igw] # IGW가 있어야 생성 가능
+}
+
+# 9. 프라이빗 라우팅 테이블 (밖으로 나갈 때 NAT를 거치도록 설정)
+resource "aws_route_table" "private_rt" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat.id
+  }
+
+  tags = { Name = "${var.project_name}-private-rt" }
+}
+
+# 10. 프라이빗 서브넷과 라우팅 테이블 연결
+resource "aws_route_table_association" "private_assoc" {
+  count          = 2
+  subnet_id      = aws_subnet.private[count.index].id
+  route_table_id = aws_route_table.private_rt.id
+}
