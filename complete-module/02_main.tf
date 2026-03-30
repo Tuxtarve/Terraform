@@ -1,3 +1,8 @@
+# 0. AWS 프로바이더 설정 (최상단)
+provider "aws" {
+  region = "ap-northeast-2" # 서울 리전 고정
+}
+
 # 1. 네트워크 모듈 호출
 module "network" {
   source       = "./modules/network"
