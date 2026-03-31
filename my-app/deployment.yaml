@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-deployment
+spec:
+  replicas: 3 # ⭐ 중요: 컨테이너를 항상 3개 띄워 놓으라는 뜻입니다!
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: node-app
+        image: my-app:v3 # 우리가 빌드해서 Kind에 로드한 이미지 이름
+        imagePullPolicy: Never # 외부에서 찾지 말고 내 로컬(Kind)에서 찾아라!
+        ports:
+        - containerPort: 8080

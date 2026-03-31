@@ -47,7 +47,40 @@ resource "aws_security_group" "web_sg" {
   tags = { Name = "Web_SG" }
 }
 
-# 3. DB 보안 그룹 (WAS -> DB / Peering 통로 허용)
+# 3. WAS 보안 그룹 (작업한 김원희, 장예지 님 파트)
+resource "aws_security_group" "was_sg" {
+  name        = "WAS_SG"
+  description = "Allow 8080 from Web_SG"
+  vpc_id      = var.public_vpc_id  # WAS가 위치한 VPC ID
+
+  # 인바운드: Web_SG 보안 그룹을 가진 서버로부터의 8080 포트만 허용
+  ingress {
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    security_groups = [aws_security_group.web_sg.id] # 여기서 Web_SG의 ID를 참조합니다!
+  }
+
+  # SSH 접속 (관리용)
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] 
+  }
+
+  # 아웃바운드: 모든 통신 허용 (DB로 가기 위해 필요)
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = { Name = "WAS_SG" }
+}
+
+# 4. DB 보안 그룹 (WAS -> DB / Peering 통로 허용)
 resource "aws_security_group" "db_sg" {
   name        = "DB_SG"
   description = "Allow MySQL from Public VPC via Peering"

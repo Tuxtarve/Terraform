@@ -4,7 +4,8 @@
 *.tfstate.*
 .terraform/
 .terraform.lock.hcl
-
+crash.log
+*.tfplan
 # 변수 파일 (DB 비밀번호, AWS Access Key 등이 들어갈 수 있음)
 *.tfvars
 *.tfvars.json

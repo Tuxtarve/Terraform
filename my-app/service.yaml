@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app-service
+spec:
+  type: NodePort # ⭐ 외부에서 접속할 수 있게 포트를 열어줍니다.
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80       # 서비스의 포트
+      targetPort: 8080 # 컨테이너(앱)의 포트
+      nodePort: 30001  # ⭐ 외부(내 컴퓨터)에서 접속할 포트 번호

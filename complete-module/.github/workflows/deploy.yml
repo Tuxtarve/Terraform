@@ -1,0 +1,29 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ] # main 브랜치에 코드 올리면 작동!
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+        aws-region: ap-northeast-2
+
+    - name: Login to ECR & Push Image
+      run: |
+        # 여기서 도커 빌드하고 ECR로 밀어넣는 명령어가 들어갑니다.
+        echo "Docker Build & Push to ECR..."
+
+    - name: Deploy to EKS
+      run: |
+        # 여기서 kubectl 명령어로 k8s/deployment.yaml을 실행합니다.
+        echo "Kubectl apply to EKS..."
