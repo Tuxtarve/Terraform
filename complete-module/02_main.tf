@@ -97,11 +97,22 @@ module "database" {
    project_name = var.project_name
    vpc_id       = module.network.vpc_id
    subnet_ids   = module.network.private_subnet_ids
+   instance_type = var.instance_type
  }
 
-# 5. # EKS 정보 참조조
+# 5. EKS 정보 참조조
 module "monitoring" {
   source       = "./modules/05_monitoring"
   # 모니터링을 설치하려면 EKS 정보가 필요할 수 있으니 참조를 걸어둡니다.
   cluster_name = module.compute.eks_cluster_name 
+}
+
+# 6. cache(redis) 추가
+module "cache" {
+  source = "./modules/06_cache"
+}
+
+# 7. edge 추가
+module "edge" {
+  source = "./modules/07_edge"
 }

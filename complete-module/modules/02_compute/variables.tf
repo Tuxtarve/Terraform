@@ -11,3 +11,8 @@ variable "vpc_id" {
   type        = string
   description = "VPC ID inherited from root"
 }
+
+variable "instance_type" {
+  type        = string
+  description = "EKS node instance type"
+}

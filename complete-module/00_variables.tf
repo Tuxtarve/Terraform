@@ -15,3 +15,8 @@ variable "vpc_cidr" {
 variable "cluster_name" {
   default = "yunjihun-eks-cluster"
 }
+
+variable "instance_type" {
+  description = "EKS node instance type"
+  type        = string
+}

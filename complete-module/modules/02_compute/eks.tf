@@ -29,8 +29,7 @@ resource "aws_eks_node_group" "main" {
   }
 
   # [변경 완료] t3.micro는 서울 리전 프리티어 대상이며, t2보다 EKS 구동에 더 안정적입니다.
-  instance_types = ["t3.micro"]
-
+instance_types = [var.instance_type]
   # EBS 디스크 크기 (프리티어 계정당 총 30GB 제한이므로 20GB면 적당함)
   disk_size = 20
 
