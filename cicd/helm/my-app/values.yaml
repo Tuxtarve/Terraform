@@ -1,0 +1,11 @@
+replicaCount: 3
+
+image:
+  repository: "" # deploy.sh에서 자동으로 채워짐
+  tag: "latest"
+  pullPolicy: Always
+
+service:
+  type: LoadBalancer # AWS ELB를 통해 외부 접속 허용
+  port: 80
+  targetPort: 8080
