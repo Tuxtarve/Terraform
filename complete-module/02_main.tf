@@ -9,6 +9,7 @@ terraform {
     encrypt        = true                      # 암호화 활성화
   }
 
+
 required_providers {
     aws = {
       source  = "hashicorp/aws"

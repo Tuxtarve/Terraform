@@ -1,0 +1,11 @@
+prometheus:
+  prometheusSpec:
+    resources:
+      requests:
+        memory: "256Mi"
+      limits:
+        memory: "512Mi"
+alertmanager:
+  enabled: false  # 메모리를 많이 먹는 알람 매니저 비활성화
+grafana:
+  adminPassword: "admin" # 접속 비밀번호 설정

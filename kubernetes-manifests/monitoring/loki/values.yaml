@@ -1,0 +1,35 @@
+cat <<EOF > ~/Terraform/kubernetes-manifests/monitoring/loki/values.yaml
+loki:
+  auth_enabled: false
+  
+  commonConfig:
+    replication_factor: 1
+    
+  storage:
+    type: s3
+    s3:
+      # 우리가 만든 S3 버킷 이름
+      bucketnames: soldesk-1109
+      endpoint: s3.ap-northeast-2.amazonaws.com
+      region: ap-northeast-2
+      # AWS 인증 방식 (EKS 노드의 IAM 역할을 사용하므로 비워둡니다)
+      s3forcepathstyle: true
+
+  # 인덱스와 데이터를 S3에 저장하도록 설정
+  schemaConfig:
+    configs:
+      - from: "2024-04-01"
+        store: tsdb
+        object_store: s3
+        schema: v13
+        index:
+          prefix: index_
+          period: 24h
+
+# 메모리가 부족한 t3.micro를 위해 리소스 제한 추가
+lokiCanary:
+  enabled: false # 테스트용 카나리 비활성화 (메모리 절약)
+
+test:
+  enabled: false
+EOF

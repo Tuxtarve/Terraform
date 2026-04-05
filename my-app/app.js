@@ -1,15 +1,25 @@
-const http = require('http');
-const os = require('os');
+const express = require('express');
+const logger = require('./config/logger');
+const tracingMiddleware = require('./middleware/tracing');
 
-const server = http.createServer((req, res) => {
-    res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
-    res.end(`
-        <h1>🚀 Docker 실습 성공!</h1>
-        <p>현재 컨테이너 호스트명: <b>${os.hostname()}</b></p>
-        <p>이 서비스는 도커 이미지로 빌드되어 실행 중입니다.</p>
-    `);
+const app = express();
+
+// 트레이싱 미들웨어 적용
+app.use(tracingMiddleware);
+
+app.get('/', (req, res) => {
+  logger.info('메인 페이지 접속', { trace_id: req.traceId });
+  res.send('Ticket App with Tracing is Running!');
 });
 
-server.listen(8080, () => {
-    console.log('서버가 8080번 포트에서 가동 중입니다...');
+app.post('/reserve', (req, res) => {
+  logger.info('티켓 예매 시도', { 
+    trace_id: req.traceId,
+    product: 'Summer-Concert-2026' 
+  });
+  res.json({ status: 'success', traceId: req.traceId });
+});
+
+app.listen(3000, () => {
+  logger.info('Server started on port 3000');
 });

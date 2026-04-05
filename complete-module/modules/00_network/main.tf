@@ -60,15 +60,42 @@ resource "aws_security_group" "nat_sg" {
   }
 }
 
-# 6. NAT 인스턴스 생성 (t3.micro 프리티어)
+# 1. 최신 Ubuntu 22.04 이미지를 자동으로 찾아오는 '검색기' 추가
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
+  }
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  owners = ["099720109477"] # Canonical(Ubuntu 제작사) 공식 ID
+}
+
+# 2. NAT 인스턴스 생성 (수정된 버전)
 resource "aws_instance" "nat" {
-  ami           = "ami-0c538597f1f0a2830" # Amazon Linux 2 NAT AMI (Seoul)
+  # 직접 ID를 적지 않고 위에서 찾은 ID를 자동으로 사용합니다.
+  ami           = data.aws_ami.ubuntu.id 
   instance_type = "t3.micro"
   subnet_id     = aws_subnet.public[0].id
+  
+  # 보안 그룹 설정 (기존 코드 변수명 확인 필요)
   vpc_security_group_ids = [aws_security_group.nat_sg.id]
-  source_dest_check      = false # NAT 역할을 위해 패킷 검사 해제 필수!
+  
+  # NAT 핵심 설정
+  source_dest_check = false 
 
-  tags = { Name = "${var.project_name}-nat-instance" }
+  user_data = <<-EOF
+              #!/bin/bash
+              echo 1 > /proc/sys/net/ipv4/ip_forward
+              iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+              EOF
+
+  tags = { 
+    Name = "${var.project_name}-nat-instance" 
+  }
 }
 
 # 7. 퍼블릭 라우팅 테이블 (0.0.0.0/0 -> 인터넷 게이트웨이)

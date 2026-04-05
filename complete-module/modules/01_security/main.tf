@@ -1,4 +1,5 @@
 # 1. VPC Peering (두 개의 VPC를 물리적으로 연결)
+/*
 resource "aws_vpc_peering_connection" "db_peering" {
   vpc_id        = var.public_vpc_id   # 00_network에서 만든 Public VPC
   peer_vpc_id   = var.private_vpc_id  # 00_network에서 만든 Private VPC
@@ -6,6 +7,7 @@ resource "aws_vpc_peering_connection" "db_peering" {
 
   tags = { Name = "${var.project_name}-peering" }
 }
+*/
 
 # 2. Web 보안 그룹 (외부 인터넷 -> Web/WAS)
 resource "aws_security_group" "web_sg" {

@@ -23,7 +23,7 @@ resource "aws_eks_node_group" "main" {
   subnet_ids      = var.subnet_ids
 
   scaling_config {
-    desired_size = 1 # 비용 절감을 위해 최소 단위 1대 유지
+    desired_size = 2 # 비용 절감을 위해 최소 단위 1대 유지
     max_size     = 2
     min_size     = 1
   }

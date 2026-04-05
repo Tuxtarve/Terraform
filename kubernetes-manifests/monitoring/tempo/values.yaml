@@ -1,0 +1,22 @@
+cat <<EOF > ~/Terraform/kubernetes-manifests/monitoring/tempo/values.yaml
+tempo:
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+  storage:
+    trace:
+      backend: s3
+      s3:
+        bucket: soldesk-1109         # 본인의 S3 버킷 이름
+        endpoint: s3.ap-northeast-2.amazonaws.com
+        region: ap-northeast-2
+      # 로컬 캐시 (성능을 위해 필요)
+      wal:
+        path: /var/tempo/wal
+      local:
+        path: /var/tempo/traces
+EOF

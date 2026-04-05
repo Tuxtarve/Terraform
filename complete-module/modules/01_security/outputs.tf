@@ -14,6 +14,9 @@ output "db_sg_id" {
 }
 
 # 4. Peering ID (라우팅 테이블 업데이트 확인용)
+/*
 output "peering_id" { 
+
   value = aws_vpc_peering_connection.db_peering.id
 }
+*/
